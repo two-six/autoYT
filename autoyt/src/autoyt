@@ -3,29 +3,46 @@
 import argparse
 import cache
 import youtubeinfo as yi
+import converter as cvr
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Python script for quickly searching and downloading new content out of YouTube.')
-    parser.add_argument('-n', '--name', metavar='QUERY', type=str, help="Search Query or Channel ID")
     parser.add_argument('-d', '--download', type=str, help="Download saved channels")
     parser.add_argument('-c', '--cap', metavar='N', type=int, help="Limit actions to N items")
     parser.add_argument('-l', '--list', action="store_true", help="List saved channels")
     parser.add_argument('-a', '--add', metavar='CHANNELS', nargs='+', type=str, help="Save channels")
-    parser.add_argument('-r', '--remove', metavar="CHANNELS", type=str, help="Remove channels")
+    parser.add_argument('-r', '--remove', metavar="CHANNELS", nargs='+', type=str, help="Remove channels")
     parser.add_argument('-x', '--export', action="store_true", help="Export saved channels")
     parser.add_argument('-s', '--search', type=str, help="Search for YouTube videos")
     parser.add_argument('-S', '--searchchannel', type=str, help="Search for YouTube channel videos")
     parser.add_argument('--removeold', action="store_true", help="Removes old saved videos")
     parser.add_argument('--exportcache', action="store_true", help="Exports saved cache")
     parser.add_argument('--new_content', metavar="N", type=int, help="Shows newly downloaded titles from N days")
-
     args = parser.parse_args()
+
     if args.list:
         cache.list_channels()
     elif args.add is not None:
+        if type(args.add) is not list:
+            args.add = [args.remove]
         channels = list(map(yi.find_channel_id, args.add))
-        channels = list(map(lambda x: {x: cache.convert_channel_info(yi.get_channel_info(x))}, channels))
+        channels = list(map(lambda x: {x: cvr.convert_channel_info(yi.get_channel_info(x))}, channels))
         data = cache.read()
         for channel in channels:
-            data = cache.add_channels(data, channel)
+            data = cache.add_channel(data, channel)
         cache.save(data)
+    elif args.remove is not None:
+        if type(args.remove) is not list:
+            args.remove = [args.remove]
+        channels = list(map(yi.find_channel_id, args.remove))
+        data = cache.read()
+        for channel in channels:
+            data = cache.remove_channel(data, channel)
+        cache.save(data)
+    elif args.search is not None:
+        limit = 10 if args.cap is None else args.cap 
+        videos = yi.find_videos(args.search, limit)
+        print(cvr.convert_videos_output(videos))
+    else:
+        parser.print_help()
+        

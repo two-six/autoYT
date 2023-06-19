@@ -17,7 +17,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
-    py_modules=["ytscheduler"],
-    package_dir={'':'ytsheduler/src'},
+    py_modules=["autoyt"],
+    package_dir={'':'autoyt/src'},
     install_requires=['yt-dlp']
 )

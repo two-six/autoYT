@@ -7,8 +7,10 @@ def list_channels():
         f = open("cache.toml", "r", encoding="utf-8")
         try: 
             data = toml.loads(f.read())
+            print(data)
             for channel in data['channels']:
-                print("Name: " + data['channels'][channel]['name'])
+                print("Name: " + data['channels'][channel]['title'])
+                print("Link: " + data['channels'][channel]['url'])
                 print("Channel ID: " + channel)
                 print()
         except:
@@ -21,10 +23,15 @@ def list_channels():
     except:
         print("Error reading cache")
 
-def add_channels(data, channel):
+def add_channel(data, channel):
     if data['channels'] is None:
         return channel
     data['channels'].update(channel)
+    return data
+
+def remove_channel(data: dict, channel: str):
+    if data.get('channels') is not None and data['channels'].get(channel) is not None:
+        data['channels'].pop(channel, None)
     return data
 
 def read():
@@ -54,6 +61,3 @@ def init_cache():
     f = open("cache.toml", "w", encoding="utf-8")
     f.write(toml.dumps({"channels": {}}))
     f.close()
-
-def convert_channel_info(data): 
-    return {'url': data['url'], 'title': data['title'], 'subscribers': data['subscribers']['simpleText'], 'views': data['views']}

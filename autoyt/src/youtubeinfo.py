@@ -37,3 +37,6 @@ def is_id(name):
         return True
     except:
         return False
+
+def find_videos(name: str, limit: int = 10):
+    return ysp.VideosSearch(name, limit).result()
