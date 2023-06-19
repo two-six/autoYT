@@ -1,2 +1,4 @@
 autoyt/src/cache.toml
 autoyt/src/__pycache__
+autoyt/src/videos
+autoyt/src/cache
