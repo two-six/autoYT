@@ -1,10 +1,13 @@
 #! /usr/bin/python
 
 import toml
+import os
+
+CACHE_DIR = "cache/"
 
 def list_channels():
     try:
-        f = open("cache.toml", "r", encoding="utf-8")
+        f = open(CACHE_DIR + "cache.toml", "r", encoding="utf-8")
         try: 
             data = toml.loads(f.read())
             print(data)
@@ -36,7 +39,7 @@ def remove_channel(data: dict, channel: str):
 
 def read():
     try:
-        f = open("cache.toml", "r", encoding="utf-8")
+        f = open(CACHE_DIR + "cache.toml", "r", encoding="utf-8")
         data = toml.loads(f.read())
         f.close()
         if data.get("channels") is None:
@@ -45,19 +48,28 @@ def read():
     except FileNotFoundError:
         init_cache()
         return {"channels": {}}
-    except:
-        print("Error reading cache")
-        exit()
 
 def save(data):
     try:
-        f = open("cache.toml", "w", encoding="utf-8")
+        f = open(CACHE_DIR + "cache.toml", "w", encoding="utf-8")
         f.write(toml.dumps(data))
         f.close()
     except:
         print("Error saving cache")
 
 def init_cache():
-    f = open("cache.toml", "w", encoding="utf-8")
+    f = open(CACHE_DIR + "cache.toml", "w", encoding="utf-8")
     f.write(toml.dumps({"channels": {}}))
     f.close()
+
+def export_saved():
+    f = open(CACHE_DIR + "cache.toml", "r", encoding="utf-8")
+    data = toml.loads(f.read())
+    f.close()
+    result = ""
+    for channel in data['channels']:
+        result += "\"" + channel + "\" "
+    return result
+
+def remove_all():
+    os.remove(CACHE_DIR + "cache.toml")

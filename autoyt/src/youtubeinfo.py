@@ -26,7 +26,7 @@ def get_channel_info(id):
 def find_channel_videos(channel_id):
     try:
         playlist = ysp.Playlist(ysp.playlist_from_channel_id(channel_id))
-        return playlist
+        return playlist.videos
     except:
         print("Couldn't find channel videos: " + channel_id)
         return {}

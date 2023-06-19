@@ -4,10 +4,12 @@ import argparse
 import cache
 import youtubeinfo as yi
 import converter as cvr
+import downloader as dlr
+import videohistory as vh
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Python script for quickly searching and downloading new content out of YouTube.')
-    parser.add_argument('-d', '--download', type=str, help="Download saved channels")
+    parser.add_argument('-d', '--download', action="store_true", help="Download saved channels")
     parser.add_argument('-c', '--cap', metavar='N', type=int, help="Limit actions to N items")
     parser.add_argument('-l', '--list', action="store_true", help="List saved channels")
     parser.add_argument('-a', '--add', metavar='CHANNELS', nargs='+', type=str, help="Save channels")
@@ -15,8 +17,9 @@ if __name__ == "__main__":
     parser.add_argument('-x', '--export', action="store_true", help="Export saved channels")
     parser.add_argument('-s', '--search', type=str, help="Search for YouTube videos")
     parser.add_argument('-S', '--searchchannel', type=str, help="Search for YouTube channel videos")
+    parser.add_argument('--removeall', action="store_true", help="Removes all saved channels")
     parser.add_argument('--removeold', action="store_true", help="Removes old saved videos")
-    parser.add_argument('--exportcache', action="store_true", help="Exports saved cache")
+    parser.add_argument('--removeallvideos', action="store_true", help="Remove all saved videos")
     parser.add_argument('--new_content', metavar="N", type=int, help="Shows newly downloaded titles from N days")
     args = parser.parse_args()
 
@@ -43,6 +46,19 @@ if __name__ == "__main__":
         limit = 10 if args.cap is None else args.cap 
         videos = yi.find_videos(args.search, limit)
         print(cvr.convert_videos_output(videos))
+    elif args.searchchannel is not None:
+        limit = 10 if args.cap is None else args.cap
+        channel_id = yi.find_channel_id(args.searchchannel)
+        videos = yi.find_channel_videos(channel_id)
+        print(cvr.convert_channel_videos_output(videos, channel_id, limit))
+    elif args.export:
+        print(cache.export_saved())
+    elif args.removeall:
+        cache.remove_all()
+    elif args.download:
+        data = vh.add_video(vh.init_history(), "4BlYUBZCCmE", "This is a bathub", "Random Shit")
+        vh.save(data)
+        # dlr.download("https://www.youtube.com/watch?v=4BlYUBZCCmE", "ba+wv", "./videos")
     else:
         parser.print_help()
         
