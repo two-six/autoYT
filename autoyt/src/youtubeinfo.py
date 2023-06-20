@@ -23,10 +23,10 @@ def get_channel_info(id):
         print("Couldn't get channel information: ", id)
         return {}
 
-def find_channel_videos(channel_id):
+def find_channel_videos(channel_id: str, limit: int = 10):
     try:
         playlist = ysp.Playlist(ysp.playlist_from_channel_id(channel_id))
-        return playlist.videos
+        return list(map(lambda x: ysp.Video.get(x['link'].split('&')[0], get_upload_date=True), playlist.videos[0:limit]))
     except:
         print("Couldn't find channel videos: " + channel_id)
         return {}
@@ -39,4 +39,4 @@ def is_id(name):
         return False
 
 def find_videos(name: str, limit: int = 10):
-    return ysp.VideosSearch(name, limit).result()
+    return list(map(lambda x: ysp.Video.get(x['link'], get_upload_date=True), ysp.VideosSearch(name, limit).result()['result']))

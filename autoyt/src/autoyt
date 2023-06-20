@@ -5,7 +5,8 @@ import cache
 import youtubeinfo as yi
 import converter as cvr
 import downloader as dlr
-import videohistory as vh
+import youtubesearchpython as ysp
+import threading
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Python script for quickly searching and downloading new content out of YouTube.')
@@ -24,7 +25,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.list:
-        cache.list_channels()
+        print(cvr.convert_channel_list(cache.list_channels()))
     elif args.add is not None:
         if type(args.add) is not list:
             args.add = [args.remove]
@@ -49,16 +50,23 @@ if __name__ == "__main__":
     elif args.searchchannel is not None:
         limit = 10 if args.cap is None else args.cap
         channel_id = yi.find_channel_id(args.searchchannel)
-        videos = yi.find_channel_videos(channel_id)
+        videos = yi.find_channel_videos(channel_id, limit)
         print(cvr.convert_channel_videos_output(videos, channel_id, limit))
     elif args.export:
         print(cache.export_saved())
     elif args.removeall:
         cache.remove_all()
     elif args.download:
-        data = vh.add_video(vh.init_history(), "4BlYUBZCCmE", "This is a bathub", "Random Shit")
-        vh.save(data)
-        # dlr.download("https://www.youtube.com/watch?v=4BlYUBZCCmE", "ba+wv", "./videos")
+        threads = list()
+        for channel in cache.list_channels()['channels']:
+            threads.append(threading.Thread(target=dlr.download_channel, args=(channel, "ba+bv", "./videos")))
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+        # data = vh.add_video(vh.init_history(), "4BlYUBZCCmE", "This is a bathub", "Random Shit")
+        # vh.save(data)
+        # dlr.download({"url": "https://www.youtube.com/watch?v=4BlYUBZCCmE", "channel": "memy kanał"}, "ba+wv", "./videos")
     else:
         parser.print_help()
         

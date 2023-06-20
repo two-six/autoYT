@@ -8,18 +8,9 @@ CACHE_DIR = "cache/"
 def list_channels():
     try:
         f = open(CACHE_DIR + "cache.toml", "r", encoding="utf-8")
-        try: 
-            data = toml.loads(f.read())
-            print(data)
-            for channel in data['channels']:
-                print("Name: " + data['channels'][channel]['title'])
-                print("Link: " + data['channels'][channel]['url'])
-                print("Channel ID: " + channel)
-                print()
-        except:
-            init_cache()
-            print("No saved channels")
+        data = toml.loads(f.read())
         f.close()
+        return data
     except FileNotFoundError:
         init_cache()
         print("No saved channels")
