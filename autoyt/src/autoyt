@@ -2,15 +2,16 @@
 
 import argparse
 import cache
+import videos
 import youtubeinfo as yi
 import converter as cvr
 import downloader as dlr
-import youtubesearchpython as ysp
 import threading
+import config
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Python script for quickly searching and downloading new content out of YouTube.')
-    parser.add_argument('-d', '--download', action="store_true", help="Download saved channels")
+    parser.add_argument('-d', '--download', metavar='N', type=int, const=5, nargs='?', help="Download saved channels(download up to N(default 5) last videos)")
     parser.add_argument('-c', '--cap', metavar='N', type=int, help="Limit actions to N items")
     parser.add_argument('-l', '--list', action="store_true", help="List saved channels")
     parser.add_argument('-a', '--add', metavar='CHANNELS', nargs='+', type=str, help="Save channels")
@@ -19,30 +20,32 @@ if __name__ == "__main__":
     parser.add_argument('-s', '--search', type=str, help="Search for YouTube videos")
     parser.add_argument('-S', '--searchchannel', type=str, help="Search for YouTube channel videos")
     parser.add_argument('--removeall', action="store_true", help="Removes all saved channels")
-    parser.add_argument('--removeold', action="store_true", help="Removes old saved videos")
+    parser.add_argument('--removevideos', metavar="N", type=int, help="Removes videos older than N days")
     parser.add_argument('--removeallvideos', action="store_true", help="Remove all saved videos")
-    parser.add_argument('--new_content', metavar="N", type=int, help="Shows newly downloaded titles from N days")
+    parser.add_argument('--removeinvalid', action="store_true", help="Removes all saved videos which don't have a saved channel")
+    parser.add_argument('--configdir', action="store_true", help="Prints configuration file path")
+    parser.add_argument('--find', metavar="CHANNEL", type=str, help="Finds all downloaded videos from a specified channel")
     args = parser.parse_args()
 
     if args.list:
-        print(cvr.convert_channel_list(cache.list_channels()))
+        print(cvr.convert_channel_list(cache.list_channels(config.get_cache_dir())))
     elif args.add is not None:
         if type(args.add) is not list:
             args.add = [args.remove]
         channels = list(map(yi.find_channel_id, args.add))
         channels = list(map(lambda x: {x: cvr.convert_channel_info(yi.get_channel_info(x))}, channels))
-        data = cache.read()
+        data = cache.read(config.get_cache_dir())
         for channel in channels:
             data = cache.add_channel(data, channel)
-        cache.save(data)
+        cache.save(data, config.get_cache_dir())
     elif args.remove is not None:
         if type(args.remove) is not list:
             args.remove = [args.remove]
         channels = list(map(yi.find_channel_id, args.remove))
-        data = cache.read()
+        data = cache.read(config.get_cache_dir())
         for channel in channels:
             data = cache.remove_channel(data, channel)
-        cache.save(data)
+        cache.save(data, config.get_cache_dir())
     elif args.search is not None:
         limit = 10 if args.cap is None else args.cap 
         videos = yi.find_videos(args.search, limit)
@@ -53,20 +56,29 @@ if __name__ == "__main__":
         videos = yi.find_channel_videos(channel_id, limit)
         print(cvr.convert_channel_videos_output(videos, channel_id, limit))
     elif args.export:
-        print(cache.export_saved())
+        print(cache.export_saved(config.get_cache_dir()))
     elif args.removeall:
-        cache.remove_all()
-    elif args.download:
+        cache.remove_all(config.get_cache_dir())
+    elif args.download is not None:
         threads = list()
-        for channel in cache.list_channels()['channels']:
-            threads.append(threading.Thread(target=dlr.download_channel, args=(channel, "ba+bv", "./videos")))
+        for channel in cache.list_channels(config.get_cache_dir())['channels']:
+            threads.append(threading.Thread(target=dlr.download_channel, args=(channel, config.get_download_quality(channel), config.get_download_dir(), args.download)))
         for thread in threads:
             thread.start()
         for thread in threads:
             thread.join()
-        # data = vh.add_video(vh.init_history(), "4BlYUBZCCmE", "This is a bathub", "Random Shit")
-        # vh.save(data)
-        # dlr.download({"url": "https://www.youtube.com/watch?v=4BlYUBZCCmE", "channel": "memy kanał"}, "ba+wv", "./videos")
+    elif args.removevideos is not None:
+        videos.remove_old_videos(args.removevideos, config.get_download_dir())
+    elif args.removeallvideos:
+        videos.remove_all_videos(config.get_download_dir())
+    elif args.removeinvalid:
+        cfg = config.get_all()
+        data = cache.read(cfg['cache_dir'])
+        videos.remove_invalid_videos(cache.get_saved_channels(data), cfg['download_dir'])
+    elif args.find:
+        print(videos.find_videos(cache.get_channel_name(yi.find_channel_id(args.find), cache.read(config.get_cache_dir())), config.get_download_dir()))
+    elif args.configdir:
+        print(config.get_config_dir())
     else:
         parser.print_help()
         

@@ -1,0 +1,3 @@
+download_dir = "./videos"
+cache_dir = "./cache"
+quality = "ba+bv"

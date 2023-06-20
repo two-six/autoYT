@@ -3,16 +3,15 @@
 import toml
 import os
 
-CACHE_DIR = "cache/"
-
-def list_channels():
+def list_channels(directory: str):
+    path = os.path.join(directory, "cache.toml")
     try:
-        f = open(CACHE_DIR + "cache.toml", "r", encoding="utf-8")
+        f = open(path, "r", encoding="utf-8")
         data = toml.loads(f.read())
         f.close()
         return data
     except FileNotFoundError:
-        init_cache()
+        init_cache(directory)
         print("No saved channels")
     except:
         print("Error reading cache")
@@ -28,33 +27,37 @@ def remove_channel(data: dict, channel: str):
         data['channels'].pop(channel, None)
     return data
 
-def read():
+def read(directory: str):
+    path = os.path.join(directory, "cache.toml")
     try:
-        f = open(CACHE_DIR + "cache.toml", "r", encoding="utf-8")
+        f = open(path, "r", encoding="utf-8")
         data = toml.loads(f.read())
         f.close()
         if data.get("channels") is None:
             data.update({"channels": {}})
         return data
     except FileNotFoundError:
-        init_cache()
+        init_cache(directory)
         return {"channels": {}}
 
-def save(data):
+def save(data, directory: str):
+    path = os.path.join(directory, "cache.toml")
     try:
-        f = open(CACHE_DIR + "cache.toml", "w", encoding="utf-8")
+        f = open(path, "w", encoding="utf-8")
         f.write(toml.dumps(data))
         f.close()
     except:
         print("Error saving cache")
 
-def init_cache():
-    f = open(CACHE_DIR + "cache.toml", "w", encoding="utf-8")
+def init_cache(directory: str):
+    path = os.path.join(directory, "cache.toml")
+    f = open(path, "w", encoding="utf-8")
     f.write(toml.dumps({"channels": {}}))
     f.close()
 
-def export_saved():
-    f = open(CACHE_DIR + "cache.toml", "r", encoding="utf-8")
+def export_saved(directory: str):
+    path = os.path.join(directory, "cache.toml")
+    f = open(path, "r", encoding="utf-8")
     data = toml.loads(f.read())
     f.close()
     result = ""
@@ -62,5 +65,15 @@ def export_saved():
         result += "\"" + channel + "\" "
     return result
 
-def remove_all():
-    os.remove(CACHE_DIR + "cache.toml")
+def remove_all(directory: str):
+    path = os.path.join(directory, "cache.toml")
+    os.remove(path)
+
+def get_channel_name(id: str, data: dict):
+    return data['channels'][id]['title']
+
+def get_saved_channels(data: dict):
+    result = list()
+    for id in data['channels']:
+        result.append(data['channels'][id]['title'])
+    return result
