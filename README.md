@@ -1,8 +1,6 @@
 # autoYT
 Updated README coming soon.
 ```
-usage: autoyt [-h] [-d [N]] [-c N] [-l] [-a CHANNELS [CHANNELS ...]] [-r CHANNELS [CHANNELS ...]] [-x] [-s SEARCH] [-S SEARCHCHANNEL] [-e] [-u REMOVEFROMCHANNEL] [--removeall] [--removeempty] [--removevideos N] [--removeallvideos] [--removeinvalid] [--configdir] [--find CHANNEL]
-
 Python script for quickly searching and downloading new content out of YouTube.
 
 options:
