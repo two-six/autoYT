@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 setuptools.setup(
     name="autoyt",
     version="0.0.1",
-    author="Maciej Ułanowicz",
+    author="Two-Six",
     description="Python script for quickly searching and downloading new content out of YouTube.",
     long_description=long_description,
     long_description_content_type="text/markdown",
