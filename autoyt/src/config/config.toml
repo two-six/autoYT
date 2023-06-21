@@ -1,3 +1,6 @@
 download_dir = "./videos"
 cache_dir = "./cache"
-quality = "ba+bv"
+quality = "ba+bv[height<=?1080]"
+max_video_age = 0
+max_downloaded_channel_videos = 0
+delete_videos_age = 1500

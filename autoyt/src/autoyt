@@ -6,12 +6,12 @@ import videos
 import youtubeinfo as yi
 import converter as cvr
 import downloader as dlr
-import threading
 import config
+from time import sleep
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Python script for quickly searching and downloading new content out of YouTube.')
-    parser.add_argument('-d', '--download', metavar='N', type=int, const=5, nargs='?', help="Download saved channels(download up to N(default 5) last videos)")
+    parser.add_argument('-d', '--download', metavar='N', type=int, const=0, nargs='?', help="Download saved channels(download up to N(default 5) last videos)")
     parser.add_argument('-c', '--cap', metavar='N', type=int, help="Limit actions to N items")
     parser.add_argument('-l', '--list', action="store_true", help="List saved channels")
     parser.add_argument('-a', '--add', metavar='CHANNELS', nargs='+', type=str, help="Save channels")
@@ -19,7 +19,10 @@ if __name__ == "__main__":
     parser.add_argument('-x', '--export', action="store_true", help="Export saved channels")
     parser.add_argument('-s', '--search', type=str, help="Search for YouTube videos")
     parser.add_argument('-S', '--searchchannel', type=str, help="Search for YouTube channel videos")
+    parser.add_argument('-e', '--endless', action="store_true", help="Starts endless mode")
+    parser.add_argument('-u', '--removefromchannel', type=str, help="Removes all videos from a specified channel")
     parser.add_argument('--removeall', action="store_true", help="Removes all saved channels")
+    parser.add_argument('--removeempty', action="store_true", help="Removes empty directories")
     parser.add_argument('--removevideos', metavar="N", type=int, help="Removes videos older than N days")
     parser.add_argument('--removeallvideos', action="store_true", help="Remove all saved videos")
     parser.add_argument('--removeinvalid', action="store_true", help="Removes all saved videos which don't have a saved channel")
@@ -59,16 +62,29 @@ if __name__ == "__main__":
         print(cache.export_saved(config.get_cache_dir()))
     elif args.removeall:
         cache.remove_all(config.get_cache_dir())
+    elif args.removefromchannel is not None:
+        channel = yi.get_channel_info(yi.find_channel_id(args.removefromchannel))['title']
+        videos.remove_from_channel(channel, config.get_download_dir())
+        videos.remove_empty_dirs(config.get_download_dir())
     elif args.download is not None:
-        threads = list()
+        limit_from_config = False
+        if args.download == -1:
+            limit_from_config = True
         for channel in cache.list_channels(config.get_cache_dir())['channels']:
-            threads.append(threading.Thread(target=dlr.download_channel, args=(channel, config.get_download_quality(channel), config.get_download_dir(), args.download)))
-        for thread in threads:
-            thread.start()
-        for thread in threads:
-            thread.join()
+            if limit_from_config:
+                args.download = config.get_max_downloaded_channel_videos(channel)
+            dlr.download_channel(channel, config.get_download_quality(channel), config.get_download_dir(), config.get_max_video_age(), args.download)
+    elif args.endless:
+        while True:
+            for channel in cache.list_channels(config.get_cache_dir())['channels']:
+                limit = config.get_max_downloaded_channel_videos(channel)
+                dlr.download_channel(channel, config.get_download_quality(channel), config.get_download_dir(), config.get_delete_videos_age(), limit)
+            videos.remove_old_videos(config.get_delete_videos_age(), config.get_download_dir())
+            sleep(600)
     elif args.removevideos is not None:
         videos.remove_old_videos(args.removevideos, config.get_download_dir())
+    elif args.removeempty:
+        videos.remove_empty_dirs(config.get_download_dir())
     elif args.removeallvideos:
         videos.remove_all_videos(config.get_download_dir())
     elif args.removeinvalid:
@@ -82,3 +98,4 @@ if __name__ == "__main__":
     else:
         parser.print_help()
         
+# ba+bv[height<=?720]

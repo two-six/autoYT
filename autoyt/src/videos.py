@@ -5,6 +5,8 @@ import shutil
 from datetime import datetime, timedelta
 
 def remove_old_videos(days: int, directory: str):
+    if days == 0:
+        return
     max_date = datetime.today() - timedelta(days=days)
     for file in os.listdir(directory):
         d = os.path.join(directory, file)
@@ -37,3 +39,16 @@ def remove_invalid_videos(saved_channels: list, directory: str):
         path = os.path.join(directory, dir)
         if len(os.listdir(path)) == 0:
             os.rmdir(path)
+
+def remove_from_channel(channel: str, directory: str):
+    for file in os.listdir(directory):
+        d = os.path.join(directory, file)
+        for ch in os.listdir(d):
+            if ch == channel:
+                shutil.rmtree(os.path.join(d, ch)) 
+
+def remove_empty_dirs(directory: str):
+    for file in os.listdir(directory):
+        d = os.path.join(directory, file)
+        if len(os.listdir(d)) == 0:
+            shutil.rmtree(d)

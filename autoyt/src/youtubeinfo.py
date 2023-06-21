@@ -26,6 +26,10 @@ def get_channel_info(id):
 def find_channel_videos(channel_id: str, limit: int = 10):
     try:
         playlist = ysp.Playlist(ysp.playlist_from_channel_id(channel_id))
+        while playlist.hasMoreVideos and (len(playlist.videos) < limit or limit == 0):
+            playlist.getNextVideos()
+        if limit == 0:
+            return list(map(lambda x: ysp.Video.get(x['link'].split('&')[0], get_upload_date=True), playlist.videos))
         return list(map(lambda x: ysp.Video.get(x['link'].split('&')[0], get_upload_date=True), playlist.videos[0:limit]))
     except:
         print("Couldn't find channel videos: " + channel_id)
