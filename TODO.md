@@ -17,7 +17,8 @@
 - [X] Removing videos without a saved channel
 - [X] Listing locations of all videos from a specific channel
 - [X] Remove all videos from a specified channel 
-- [ ] Add support for downloading livestreams
+- [X] Add support for downloading livestreams
+- [ ] Allow to create a full archive of selected channels
 
 # Config
 - [X] Creating default config
@@ -29,6 +30,7 @@
 - [X] Set how old videos are allowed to be downloaded(with no matter how old as 0)
 - [X] Set default number of downloaded videos(with max as entire channel or 0)
 - [X] Set time after content is being deleted(endless mode)(with never as 0)
+- [X] Set time to wait between checking for new videos(endless mode)
 
 # Utils
 - [X] Add endless mode to run in a loop and check for new videos every few minutes 
@@ -37,8 +39,10 @@
 
 # Important
 - [ ] Make it work as a pip package
+- [ ] Create a README with demo
 - [X] Quiet mode by default?
-- [ ] Remove certain characters from channel names
+- [X] Remove certain characters from channel names
+- [X] Extract upload_date from youtube-dl
 
 # Bugs
 - [X] Make it properly recognise already downloaded videos

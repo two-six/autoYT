@@ -1,5 +1,3 @@
-#! /usr/bin/python
-
 import toml
 import os
 
@@ -31,7 +29,7 @@ def get_all():
         return data
     except:
         init()
-        return {"download_dir": "./videos", "cache_dir": "./cache", "quality": "ba+bv[height<=?1080]", "max_video_age": 5, "max_downloaded_channel_videos": 5, "delete_videos_age": 5}
+        return {"download_dir": "./videos", "cache_dir": "./cache", "quality": "ba+bv[height<=?1080]", "max_video_age": 5, "max_downloaded_channel_videos": 5, "delete_videos_age": 5, "channels_check_break": 600}
 
 def get_max_downloaded_channel_videos(channel: str):
     try:
@@ -78,11 +76,19 @@ def get_delete_videos_age():
     except:
         return 5
 
+def get_channels_check_break():
+    try:
+        f = open("./config/config.toml")
+        data = toml.loads(f.read())
+        f.close()
+        return data['channels_check_break']
+    except:
+        return 600
 
 def init():
     try:
         f = open("./config/config.toml", "w")
-        f.write(toml.dumps({"download_dir": "./videos", "cache_dir": "./cache", "quality": "ba+bv[height<=?1080]", "max_video_age": 5, "delete_videos_age": 5}))
+        f.write(toml.dumps({"download_dir": "./videos", "cache_dir": "./cache", "quality": "ba+bv[height<=?1080]", "max_video_age": 5, "delete_videos_age": 5, "channels_check_break": 600}))
         f.close()
     except:
         print("Couldn't create config file")

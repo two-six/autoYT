@@ -1,6 +1,6 @@
-#! /usr/bin/python
-
 import youtubesearchpython as ysp
+import yt_dlp
+from datetime import datetime
 
 def find_channel_id(name):
     if is_id(name):
@@ -29,8 +29,8 @@ def find_channel_videos(channel_id: str, limit: int = 10):
         while playlist.hasMoreVideos and (len(playlist.videos) < limit or limit == 0):
             playlist.getNextVideos()
         if limit == 0:
-            return list(map(lambda x: ysp.Video.get(x['link'].split('&')[0], get_upload_date=True), playlist.videos))
-        return list(map(lambda x: ysp.Video.get(x['link'].split('&')[0], get_upload_date=True), playlist.videos[0:limit]))
+            return playlist.videos
+        return playlist.videos[0:limit]
     except:
         print("Couldn't find channel videos: " + channel_id)
         return {}
@@ -44,3 +44,8 @@ def is_id(name):
 
 def find_videos(name: str, limit: int = 10):
     return list(map(lambda x: ysp.Video.get(x['link'], get_upload_date=True), ysp.VideosSearch(name, limit).result()['result']))
+
+def get_video_upload_date(url: str):
+    with yt_dlp.YoutubeDL({"quiet": True, "no_warnings": True}) as ydl:
+        info =  ydl.extract_info(url, download=False)
+        return info.get("upload_date", datetime.today())

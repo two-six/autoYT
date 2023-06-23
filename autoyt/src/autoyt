@@ -10,7 +10,7 @@ import config
 from time import sleep
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Python script for quickly searching and downloading new content out of YouTube.')
+    parser = argparse.ArgumentParser(description='Python program for quickly searching and automatically downloading new content out of YouTube.')
     parser.add_argument('-d', '--download', metavar='N', type=int, const=0, nargs='?', help="Download saved channels(download up to N(default 5) last videos)")
     parser.add_argument('-c', '--cap', metavar='N', type=int, help="Limit actions to N items")
     parser.add_argument('-l', '--list', action="store_true", help="List saved channels")
@@ -80,7 +80,7 @@ if __name__ == "__main__":
                 limit = config.get_max_downloaded_channel_videos(channel)
                 dlr.download_channel(channel, config.get_download_quality(channel), config.get_download_dir(), config.get_delete_videos_age(), limit)
             videos.remove_old_videos(config.get_delete_videos_age(), config.get_download_dir())
-            sleep(600)
+            sleep(config.get_channels_check_break())
     elif args.removevideos is not None:
         videos.remove_old_videos(args.removevideos, config.get_download_dir())
     elif args.removeempty:
