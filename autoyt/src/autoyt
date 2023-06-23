@@ -78,7 +78,7 @@ if __name__ == "__main__":
         while True:
             for channel in cache.list_channels(config.get_cache_dir())['channels']:
                 limit = config.get_max_downloaded_channel_videos(channel)
-                dlr.download_channel(channel, config.get_download_quality(channel), config.get_download_dir(), config.get_delete_videos_age(), limit)
+                dlr.download_channel(channel, config.get_download_quality(channel), config.get_download_dir(), config.get_max_video_age(), limit)
             videos.remove_old_videos(config.get_delete_videos_age(), config.get_download_dir())
             sleep(config.get_channels_check_break())
     elif args.removevideos is not None:
