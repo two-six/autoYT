@@ -39,10 +39,11 @@
 
 # Important
 - [ ] Make it work as a pip package
-- [ ] Create a README with demo
+- [X] Create a README
 - [X] Quiet mode by default?
 - [X] Remove certain characters from channel names
 - [X] Extract upload_date from youtube-dl
+- [ ] Work on configuration options for separate channels
 
 # Bugs
 - [X] Make it properly recognise already downloaded videos
