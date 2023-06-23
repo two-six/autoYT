@@ -94,7 +94,7 @@ $ autoyt --find fireship
 ./videos/2023_06_21/Fireship/PHP will make you poor StackOverflow 2023 Results.webm
 ```
 
-And finally you can use an `endless` mode. It'll run the download and remove videos automatically by running in a loop. It takes all of it's arguments from the config file.
+And finally you can use an `endless` mode - `-e`. It'll download and remove videos automatically by running in a loop. It takes all of it's arguments from the config file.
 
 You can do more using autoYT. To list all of the available options use `-h` argument - `autoyt -h`
 
