@@ -54,11 +54,14 @@ def download_channel(id: str, video_format: str, directory: str, max_video_age: 
     for video in videos:
         video['link'] = video['link'].split('&')[0]
         publish_date = datetime.today()
-        with yt_dlp.YoutubeDL({"quiet": True, "no_warnings": True}) as ydl:
-            info_dict = ydl.extract_info(video['link'], download=False)
-            if info_dict['is_live']:
-                video_format = "best"
-            publish_date = datetime.strptime(info_dict.get("upload_date", datetime.today()), "%Y%m%d")
+        try: 
+            with yt_dlp.YoutubeDL({"quiet": True, "no_warnings": True}) as ydl:
+                info_dict = ydl.extract_info(video['link'], download=False)
+                if info_dict['is_live']:
+                    video_format = "best"
+                publish_date = datetime.strptime(info_dict.get("upload_date", datetime.today()), "%Y%m%d")
+        except:
+            continue
         if max_video_age == 0:
             download({'publishDate': publish_date, 'channel': video['channel']['name'], 'url': video['link'], 'title': video['title'], 'id': video['id']}, video_format, directory)
         else:
