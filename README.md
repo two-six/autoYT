@@ -2,6 +2,8 @@
 
 autoYT is a Python program designed to automate the process of watching videos out of YouTube, without using YouTube. It's functions include searching YouTube for videos, searching channels for a new videos, but also to download, delete and group videos into folders based on their upload date both automatically and manually.
 
+Simply run `pip install autoyt` to install
+
 # Usage
 To search for a video, use the `-s` or `--search` argument.
 
