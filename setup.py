@@ -13,9 +13,9 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=setuptools.find_packages(),
+    license="AGPLv3",
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: AGPLv3",
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
