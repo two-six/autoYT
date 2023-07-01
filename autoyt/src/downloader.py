@@ -83,4 +83,5 @@ def remove_filename_unsopported_chars(name: str):
     name = name.replace("<", "")
     name = name.replace(">", "")
     name = name.replace("|", "")
+    name = name.strip()
     return name

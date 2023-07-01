@@ -1,39 +1,43 @@
 import toml
 import os
 
+CONFIG_PATH = os.path.join(os.path.expanduser('~'), ".config/autoyt/config.toml")
+CACHE_DIR = os.path.join(os.path.expanduser('~'), ".cache/autoyt")
+VIDEOS_PATH = os.path.join(os.path.expanduser('~'), "Videos/autoYT")
+
 def get_download_dir():
     try:
-        f = open("./config/config.toml")
+        f = open(os.path.join(CONFIG_PATH))
         data = toml.loads(f.read())
         f.close()
         return data['download_dir']
     except:
         init()
-        return './videos'
+        return VIDEOS_PATH
 
 def get_cache_dir():
     try:
-        f = open("./config/config.toml")
+        f = open(CONFIG_PATH)
         data = toml.loads(f.read())
         f.close()
         return data['cache_dir']
     except:
         init()
-        return './cache'
+        return os.path.join(os.path.expanduser('~'), ".cache/autoyt/")
     
 def get_all():
     try:
-        f = open("./config/config.toml")
+        f = open(CONFIG_PATH)
         data = toml.loads(f.read())
         f.close()
         return data
     except:
         init()
-        return {"download_dir": "./videos", "cache_dir": "./cache", "quality": "ba+bv[height<=?1080]", "max_video_age": 5, "max_downloaded_channel_videos": 5, "delete_videos_age": 5, "channels_check_break": 600}
+        return {"download_dir": VIDEOS_PATH, "cache_dir": CACHE_DIR, "quality": "ba+bv[height<=?1080]", "max_video_age": 5, "max_downloaded_channel_videos": 5, "delete_videos_age": 5, "channels_check_break": 600}
 
 def get_max_downloaded_channel_videos(channel: str):
     try:
-        f = open("./config/config.toml")
+        f = open(CONFIG_PATH)
         data = toml.loads(f.read())
         f.close()
         if data.get(channel) is None:
@@ -47,7 +51,7 @@ def get_max_downloaded_channel_videos(channel: str):
 
 def get_download_quality(channel: str):
     try:
-        f = open("./config/config.toml")
+        f = open(CONFIG_PATH)
         data = toml.loads(f.read())
         f.close()
         if data.get(channel) is None:
@@ -60,7 +64,7 @@ def get_download_quality(channel: str):
 
 def get_max_video_age():
     try:
-        f = open("./config/config.toml")
+        f = open(CONFIG_PATH)
         data = toml.loads(f.read())
         f.close()
         return data["max_video_age"]
@@ -69,7 +73,7 @@ def get_max_video_age():
 
 def get_delete_videos_age():
     try:
-        f = open("./config/config.toml")
+        f = open(CONFIG_PATH)
         data = toml.loads(f.read())
         f.close()
         return data["delete_videos_age"]
@@ -78,7 +82,7 @@ def get_delete_videos_age():
 
 def get_channels_check_break():
     try:
-        f = open("./config/config.toml")
+        f = open(CONFIG_PATH)
         data = toml.loads(f.read())
         f.close()
         return data['channels_check_break']
@@ -87,11 +91,12 @@ def get_channels_check_break():
 
 def init():
     try:
-        f = open("./config/config.toml", "w")
-        f.write(toml.dumps({"download_dir": "./videos", "cache_dir": "./cache", "quality": "ba+bv[height<=?1080]", "max_video_age": 5, "delete_videos_age": 5, "channels_check_break": 600}))
+        os.makedirs(os.path.join(os.path.expanduser('~'), ".config/autoyt"), exist_ok=True)
+        f = open(CONFIG_PATH, "w")
+        f.write(toml.dumps({"download_dir": VIDEOS_PATH, "cache_dir": CACHE_DIR, "quality": "ba+bv[height<=?1080]", "max_video_age": 5, "delete_videos_age": 5, "channels_check_break": 600}))
         f.close()
     except:
         print("Couldn't create config file")
 
 def get_config_dir():
-    return os.path.join(os.getcwd(), 'config/config.toml')
+    return os.path.join(os.path.expanduser('~'), ".config/autoyt")

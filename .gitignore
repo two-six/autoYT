@@ -3,3 +3,6 @@ autoyt/src/__pycache__
 autoyt/src/videos
 autoyt/src/videos2
 autoyt/src/cache
+dist/
+build/
+autoyt/src/autoyt.egg-info

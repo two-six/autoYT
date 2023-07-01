@@ -48,6 +48,7 @@ def save(data, directory: str):
         print("Error saving cache")
 
 def init_cache(directory: str):
+    os.makedirs(directory, exist_ok=True)
     path = os.path.join(directory, "cache.toml")
     f = open(path, "w", encoding="utf-8")
     f.write(toml.dumps({"channels": {}}))
